@@ -22,5 +22,7 @@ private:
     int getUserOption();
     void processUserOptions(int userOption);
 
+    std::string currentTime;
+
     OrderBook orderBook{"20200317.csv"};
 };

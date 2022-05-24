@@ -3,6 +3,7 @@
 #include <vector>
 #include "OrderBookEntry.h"
 #include "CSVReader.h"
+#include <limits>
 
 MerkelMain::MerkelMain()
 {
@@ -11,6 +12,7 @@ MerkelMain::MerkelMain()
 void MerkelMain::init()
 {
     int input;
+    currentTime = orderBook.getEarliestTime();
     while (true)
     {
         printMenu();
@@ -32,7 +34,7 @@ void MerkelMain::printMarketStats()
 
         std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::ask,
                                                                   p,
-                                                                  "2020/03/17 17:01:24.884492");
+                                                                  currentTime);
 
         std::cout << "Asks seen: " << entries.size() << std::endl;
         std::cout << "Max ask: " << OrderBook::getHighPrice(entries) << std::endl;
@@ -59,7 +61,27 @@ void MerkelMain::printMarketStats()
 
 void MerkelMain::enterAsk()
 {
-    std::cout << "Make an offer - enter amount:" << std::endl;
+    std::cout << "Make an ask - enter amount: product, price, amount, eg ETH/BTC,200,0.5" << std::endl;
+    std::string input;
+    std::getline(std::cin, input);
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::vector<std::string> tokens = CSVReader::tokenise(input, ',');
+    if (tokens.size() != 3)
+    {
+        std::cout << "Bad input! " << input << std::endl;
+    }
+    else
+    {
+        OrderBookEntry obe = CSVReader::stringsToOBE(
+            tokens[1],
+            tokens[2],
+            currentTime,
+            tokens[0],
+            OrderBookType::ask);
+    }
+
+    std::cout << "You typed: " << input << std::endl;
 }
 
 void MerkelMain::enterBid()
@@ -75,6 +97,7 @@ void MerkelMain::printWallet()
 void MerkelMain::gotoNextTimeframe()
 {
     std::cout << "Proceeding to next step..." << std::endl;
+    currentTime = orderBook.getNextTime(currentTime);
 }
 
 void MerkelMain::printMenu()
@@ -90,14 +113,17 @@ void MerkelMain::printMenu()
     // Main menu divider
     std::cout << "=========================" << std::endl;
 
-    // Main menu prompt
-    std::cout << "Type in 1-6" << std::endl;
+    std::cout << "Current time is: " << currentTime << std::endl;
 }
 
 int MerkelMain::getUserOption()
 {
     // User input
     int userOption{};
+
+    // Main menu prompt
+    std::cout << "Type in 1-6" << std::endl;
+
     std::cin >> userOption;
     std::cout << "You selected: " << userOption << std::endl;
     return userOption;
