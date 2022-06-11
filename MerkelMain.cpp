@@ -1,16 +1,19 @@
 #include "MerkelMain.h"
-#include <iostream>
-#include <vector>
 #include "OrderBookEntry.h"
 #include "CSVReader.h"
-#include <limits>
+#include <iostream>
+#include <vector>
 
-MerkelMain::MerkelMain()
-{
-}
+// Tell compilier to create default constructor
+MerkelMain::MerkelMain() = default;
 
 void MerkelMain::init()
 {
+    std::cout << "=============================" << std::endl;
+    std::cout << "*** Welcome to AdvisorBot ***" << std::endl;
+    std::cout << "=============================\n"
+              << std::endl;
+
     int input;
     currentTime = orderBook.getEarliestTime();
 
@@ -24,54 +27,57 @@ void MerkelMain::init()
     }
 }
 
-void MerkelMain::printHelp()
+// Main menu options printed to console
+void MerkelMain::printMenu()
 {
-    std::cout << "You do need help... You're broke!" << std::endl;
+    // 1 print help
+    std::cout << "1: Print help" << std::endl;
+    // 2 print exchange stats
+    std::cout << "2: Print exchange stats" << std::endl;
+    // 3 make an offer
+    std::cout << "3: Make an offer" << std::endl;
+    // 4 make a bid
+    std::cout << "4: Make a bid" << std::endl;
+    // 5 print wallet
+    std::cout << "5: Print wallet" << std::endl;
+    // 6 continue
+    std::cout << "6: Continue" << std::endl;
+    std::cout << "=========================" << std::endl;
+    std::cout << "Current time is: " << currentTime << std::endl;
 }
 
+// console message for user input 1
+void MerkelMain::printHelp()
+{
+    std::cout << "You do need help... You're broke! We are here to make some money, so let's analyze the crypto market to start making some bids and offers." << std::endl;
+}
+
+// console message for user input 2
 void MerkelMain::printMarketStats()
 {
     for (std::string const &p : orderBook.getKnownProducts())
     {
         std::cout << "Product: " << p << std::endl;
-
         std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::ask,
                                                                   p,
                                                                   currentTime);
-
         std::cout << "Asks seen: " << entries.size() << std::endl;
         std::cout << "Max ask: " << OrderBook::getHighPrice(entries) << std::endl;
         std::cout << "Min ask: " << OrderBook::getLowPrice(entries) << std::endl;
     }
-    // std::cout << "OrderBook contains: " << orders.size() << " entries" << std::endl;
-    // unsigned int bids = 0;
-    // unsigned int asks = 0;
-
-    // for (OrderBookEntry &e : orders)
-    // {
-    //     if (e.orderType == OrderBookType::ask)
-    //     {
-    //         asks++;
-    //     }
-    //     if (e.orderType == OrderBookType::bid)
-    //     {
-    //         bids++;
-    //     }
-    // }
-
-    // std::cout << "OrderBook asks: " << asks << " bids: " << bids << std::endl;
 }
 
+// console message for user input 3
 void MerkelMain::enterAsk()
 {
-    std::cout << "Make an ask - enter amount: product, price, amount, eg ETH/BTC,200,0.5" << std::endl;
+    std::cout << "Make an ask - enter amount: product,price,amount (e.g. ETH/BTC,200,0.5)" << std::endl;
     std::string input;
     std::getline(std::cin, input);
 
     std::vector<std::string> tokens = CSVReader::tokenise(input, ',');
     if (tokens.size() != 3)
     {
-        std::cout << "Bad input! " << input << std::endl;
+        std::cout << "MerkelMain::enterAsk Bad input! " << input << std::endl;
     }
     else
     {
@@ -85,15 +91,14 @@ void MerkelMain::enterAsk()
                 OrderBookType::ask);
 
             obe.username = "simuser";
-
             if (wallet.canFulfillOrder(obe))
             {
-                std::cout << "Wallet looks good. " << std::endl;
+                std::cout << "Wallet looks good." << std::endl;
                 orderBook.insertOrder(obe);
             }
             else
             {
-                std::cout << "Wallet has insufficient funds. " << std::endl;
+                std::cout << "Wallet has insufficient funds." << std::endl;
             }
         }
         catch (const std::exception &e)
@@ -103,16 +108,16 @@ void MerkelMain::enterAsk()
     }
 }
 
+// console message for user input 4
 void MerkelMain::enterBid()
 {
-    std::cout << "Make a bid - enter amount: product, price, amount, eg ETH/BTC,200,0.5" << std::endl;
+    std::cout << "Make a bid - enter amount: product,price,amount (e.g. ETH/BTC,200,0.5)" << std::endl;
     std::string input;
     std::getline(std::cin, input);
-
     std::vector<std::string> tokens = CSVReader::tokenise(input, ',');
     if (tokens.size() != 3)
     {
-        std::cout << "Bad input! " << input << std::endl;
+        std::cout << "MerkelMain::enterBid Bad input!" << input << std::endl;
     }
     else
     {
@@ -126,15 +131,14 @@ void MerkelMain::enterBid()
                 OrderBookType::bid);
 
             obe.username = "simuser";
-
             if (wallet.canFulfillOrder(obe))
             {
-                std::cout << "Wallet looks good. " << std::endl;
+                std::cout << "Wallet looks good." << std::endl;
                 orderBook.insertOrder(obe);
             }
             else
             {
-                std::cout << "Wallet has insufficient funds. " << std::endl;
+                std::cout << "Wallet has insufficient funds." << std::endl;
             }
         }
         catch (const std::exception &e)
@@ -144,15 +148,17 @@ void MerkelMain::enterBid()
     }
 }
 
+// console message for user input 5
 void MerkelMain::printWallet()
 {
-    std::cout << "Your wallet is empty. Re-evaluate your entire life." << std::endl;
+    // std::cout << "Your wallet is empty. Re-evaluate your entire life." << std::endl;
     std::cout << wallet.toString() << std::endl;
 }
 
+// console message for user input 6
 void MerkelMain::gotoNextTimeframe()
 {
-    std::cout << "Proceeding to next step..." << std::endl;
+    std::cout << "Going to next time frame..." << std::endl;
 
     for (std::string p : orderBook.getKnownProducts())
     {
@@ -170,24 +176,7 @@ void MerkelMain::gotoNextTimeframe()
             }
         }
     }
-
     currentTime = orderBook.getNextTime(currentTime);
-}
-
-void MerkelMain::printMenu()
-{
-    // Main menu options printed to console
-    std::cout << "1: Print help" << std::endl;
-    std::cout << "2: Print exchange stats" << std::endl;
-    std::cout << "3: Make an offer" << std::endl;
-    std::cout << "4: Make a bid" << std::endl;
-    std::cout << "5: Print wallet" << std::endl;
-    std::cout << "6: Continue" << std::endl;
-
-    // Main menu divider
-    std::cout << "=========================" << std::endl;
-
-    std::cout << "Current time is: " << currentTime << std::endl;
 }
 
 int MerkelMain::getUserOption()
@@ -207,8 +196,6 @@ int MerkelMain::getUserOption()
     {
         //
     }
-
-    std::cin >> userOption;
     std::cout << "You selected: " << userOption << std::endl;
     return userOption;
 }
@@ -218,7 +205,7 @@ void MerkelMain::processUserOptions(int userOption)
     // Conditional output based on user input
     if (userOption == 0 || userOption > 6)
     {
-        std::cout << "Invalid choice. Choose 1-6" << std::endl;
+        std::cout << "Invalid choice. Choose a number 1-6" << std::endl;
     }
     if (userOption == 1)
     {

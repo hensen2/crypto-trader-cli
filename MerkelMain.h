@@ -1,9 +1,9 @@
 #pragma once
 
-#include <vector>
-#include "OrderBookEntry.h"
 #include "OrderBook.h"
+#include "OrderBookEntry.h"
 #include "Wallet.h"
+#include <vector>
 
 class MerkelMain
 {
@@ -13,13 +13,13 @@ public:
     void init();
 
 private:
+    void printMenu();
     void printHelp();
     void printMarketStats();
     void enterAsk();
     void enterBid();
     void printWallet();
     void gotoNextTimeframe();
-    void printMenu();
     int getUserOption();
     void processUserOptions(int userOption);
 

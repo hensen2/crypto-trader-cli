@@ -2,9 +2,8 @@
 #include <iostream>
 #include <fstream>
 
-CSVReader::CSVReader()
-{
-}
+// Tell compilier to create default constructor
+CSVReader::CSVReader() = default;
 
 std::vector<OrderBookEntry> CSVReader::readCSV(std::string csvFilename)
 {
@@ -30,7 +29,9 @@ std::vector<OrderBookEntry> CSVReader::readCSV(std::string csvFilename)
         csvFile.close(); // need to close file !!! 3.2 video
     }
 
-    std::cout << "CSVReader::readCSV read " << entries.size() << " entries" << std::endl;
+    std::cout << "Order book loaded...\n"
+              << "Loaded data contains " << entries.size() << " entries\n"
+              << std::endl;
     return entries;
 }
 

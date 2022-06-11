@@ -1,11 +1,9 @@
 #include "Wallet.h"
-#include <iostream>
-#include <vector>
 #include "CSVReader.h"
+#include <iostream>
 
-Wallet::Wallet()
-{
-}
+// Tell compilier to create default constructor
+Wallet::Wallet() = default;
 
 void Wallet::insertCurrency(std::string type, double amount)
 {
@@ -132,4 +130,10 @@ void Wallet::processSale(OrderBookEntry &sale)
         currencies[incomingCurrency] += incomingAmount;
         currencies[outgoingCurrency] -= outgoingAmount;
     }
+}
+
+std::ostream &operator<<(std::ostream &os, Wallet &wallet)
+{
+    os << wallet.toString();
+    return os;
 }
