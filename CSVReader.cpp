@@ -8,7 +8,6 @@ CSVReader::CSVReader() = default;
 std::vector<OrderBookEntry> CSVReader::readCSV(std::string csvFilename)
 {
     std::vector<OrderBookEntry> entries;
-
     std::ifstream csvFile{csvFilename};
     std::string line;
 
@@ -23,12 +22,11 @@ std::vector<OrderBookEntry> CSVReader::readCSV(std::string csvFilename)
             }
             catch (const std::exception &e)
             {
-                std::cout << "CSVReader::readCSV bad data" << std::endl;
+                std::cout << "CSVReader::readCSV Bad data" << std::endl;
             }
         }
-        csvFile.close(); // need to close file !!! 3.2 video
+        csvFile.close();
     }
-
     std::cout << "Order book loaded...\n"
               << "Loaded data contains " << entries.size() << " entries\n"
               << std::endl;
@@ -40,7 +38,6 @@ std::vector<std::string> CSVReader::tokenise(std::string csvLine, char separator
     std::vector<std::string> tokens;
     signed int start, end;
     std::string token;
-
     start = csvLine.find_first_not_of(separator, 0);
 
     do
@@ -58,7 +55,6 @@ std::vector<std::string> CSVReader::tokenise(std::string csvLine, char separator
         {
             token = csvLine.substr(start, csvLine.length() - start);
         }
-
         tokens.push_back(token);
         start = end + 1;
     } while (end > 0);
@@ -72,7 +68,7 @@ OrderBookEntry CSVReader::stringsToOBE(std::vector<std::string> tokens)
 
     if (tokens.size() != 5) // bad
     {
-        std::cout << "Bad line " << std::endl;
+        std::cout << "Bad line - missing data fields" << std::endl;
         throw std::exception{};
     }
     // we have 5 tokens
@@ -83,8 +79,8 @@ OrderBookEntry CSVReader::stringsToOBE(std::vector<std::string> tokens)
     }
     catch (const std::exception &e)
     {
-        std::cout << "CSVReader::stringsToOBE Bad float! " << tokens[3] << std::endl;
-        std::cout << "CSVReader::stringsToOBE Bad float! " << tokens[4] << std::endl;
+        std::cout << "CSVReader::stringsToOBE - Bad float! " << tokens[3] << std::endl;
+        std::cout << "CSVReader::stringsToOBE - Bad float! " << tokens[4] << std::endl;
         throw;
     }
 
@@ -112,8 +108,8 @@ OrderBookEntry CSVReader::stringsToOBE(std::string priceString,
     }
     catch (const std::exception &e)
     {
-        std::cout << "CSVReader::stringsToOBE Bad float! " << priceString << std::endl;
-        std::cout << "CSVReader::stringsToOBE Bad float! " << amountString << std::endl;
+        std::cout << "CSVReader::stringsToOBE - Bad float! " << priceString << std::endl;
+        std::cout << "CSVReader::stringsToOBE - Bad float! " << amountString << std::endl;
         throw;
     }
     OrderBookEntry obe{price,
